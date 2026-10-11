@@ -2,19 +2,26 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
   <meta name="theme-color" content="#071628">
   <meta name="description" content="WTI 선물 종가 기반 기술분석 리서치 터미널. 가격차트, 이동평균선, RSI, MACD, 방향 점수, 비중첩 백테스트.">
   <title>WTI Research Terminal · Technical Strategy</title>
-  <link rel="stylesheet" href="./styles.css?v=20261011">
-  <script defer src="./app.js?v=20261011"></script>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="./styles.css?v=20261012">
+  <link rel="stylesheet" href="./mobile.css?v=20261012">
+  <script defer src="./app.js?v=20261012"></script>
 </head>
 <body>
 <div class="site-shell">
   <header class="topbar">
     <div class="logo"><span class="logo-glyph">W<span class="logo-gold">/</span></span><div><strong>WTI RESEARCH TERMINAL</strong><span>ENERGY · TECHNICAL STRATEGY</span></div></div>
-    <div class="top-actions"><span class="pill"><i class="status-dot"></i> 정산가 데이터 · 수동 업데이트</span><button id="openData" class="btn ghost">데이터 관리</button><button id="printBtn" class="btn primary">인쇄 / PDF</button></div>
+    <div class="top-actions"><button id="installApp" class="btn install-btn" hidden>앱 설치</button><span class="pill"><i class="status-dot"></i> 정산가 데이터 · 수동 업데이트</span><button id="openData" class="btn ghost">데이터 관리</button><button id="printBtn" class="btn primary">인쇄 / PDF</button></div>
   </header>
+  <div class="offline-notice" id="offlineNotice" hidden role="status">오프라인 상태입니다. 저장된 마지막 가격이 표시될 수 있으니 최신 정산가를 재확인하세요.</div>
   <section class="hero">
     <div class="hero-top"><div><span class="eyebrow">NYMEX WTI FRONT-MONTH SETTLEMENT</span><h1>WTI 선물 기술분석 <em>Research Desk</em></h1><p>검증된 일별 정산가를 바탕으로 추세·모멘텀·평균회귀와 과거 방향 적중률을 분석합니다.</p></div><div class="hero-tag">W. ENERGY <span>01 / STRATEGY</span></div></div>
     <div class="hero-grid">
@@ -37,7 +44,7 @@
         <div id="oscPanels" class="osc-panels"></div>
         <div class="chart-footer"><span id="rangeSummary">—</span><span class="chart-note">터치 · 마우스 이동 시 해당 정산가 조회</span></div>
       </article>
-      <aside class="panel insight-panel">
+      <aside class="panel insight-panel" id="directionPanel">
         <div class="section-heading compact"><div><div class="section-number">02 / DIRECTIONAL VIEW</div><h2>방향성 판정</h2><p>기술적 우위 점수 · 상승 확률 아님</p></div></div>
         <section class="restored-ring-panel" aria-label="원형 방향성 점수 게이지">
           <div class="score-ring" id="scoreRing" role="img" aria-label="기술적 방향 점수">
@@ -78,6 +85,11 @@
     <footer class="footer"><span>WTI RESEARCH TERMINAL · GitHub Pages Edition</span><span>단순 교육·리서치용 기술 분석 · 투자 권유 아님 · <a href="https://github.com/jskimlam/WTI-Research-Terminal" target="_blank" rel="noopener">GitHub source ↗</a></span></footer>
   </main>
 </div>
+<nav class="mobile-tabbar" aria-label="모바일 빠른 이동">
+  <a href="#chartSection" aria-label="가격 차트 이동"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 6-8 3 2"/></svg>차트</a>
+  <a href="#directionPanel" aria-label="방향성 분석 이동"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12l5-4"/></svg>방향 분석</a>
+  <a href="#backtest" aria-label="백테스트 이동"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16"/><path d="M7 15l4-4 4 2 5-7"/></svg>백테스트</a>
+</nav>
 <dialog id="dataDialog">
   <div class="dialog-header"><div><span class="section-number">PRICE DATA MANAGER</span><h2>정산가 데이터 관리</h2></div><button id="closeData" class="btn ghost">닫기 ✕</button></div>
   <p>CSV 파일을 불러오면 현재 브라우저에서 정산가와 모든 지표를 다시 계산합니다. <b>로컬 불러오기는 GitHub 저장소에 자동 저장되지 않습니다.</b></p>
