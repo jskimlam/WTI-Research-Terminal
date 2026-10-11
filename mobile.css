@@ -1,7 +1,7 @@
 /* Mobile-first adaptations for Galaxy S / Flip cover and main / Fold 7-8 cover and main.
    Base visual language remains in styles.css; all rules here are deliberate overrides. */
 html{scroll-padding-top:18px}
-body{overflow-x:clip}
+body{min-width:0;overflow-x:clip}
 .site-shell,.panel,.hero,.chart-panel,.insight-panel,.topbar{min-width:0}
 .topbar{padding-inline:max(0px,env(safe-area-inset-left)) max(0px,env(safe-area-inset-right))}
 button,.btn,.control-group button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
