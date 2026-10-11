@@ -81,6 +81,21 @@ function scoreAt(i,h){
 }
 function direction(score){return score>=56?"상승 우위":score<=44?"하락 우위":"중립"}
 function directionClass(score){return score>=56?"up":score<=44?"down":"neutral"}
+function renderCircularScore(signal,horizon){
+  const ring=$("scoreRing"),number=$("scoreRingValue"),label=$("scoreRingHorizon"),directionText=$("scoreRingDirection"),caption=$("scoreRingCaption");
+  if(!ring||!number||!label||!directionText||!caption)return;
+  const score=signal?.overall;
+  const horizonText=PERIODS.find(x=>x.n===horizon)?.label||"선택 기간";
+  const color=score==null?"#59748c":score<=44?"#fb7c86":score<=55?"#d5b06b":"#43d3a4";
+  const pct=score==null?0:clamp(score,0,100);
+  ring.style.background="conic-gradient("+color+" 0 "+pct+"%, #1b3147 "+pct+"% 100%)";
+  ring.setAttribute("aria-label",horizonText+" 방향 점수 "+(score??"미계산")+"/100, "+(score==null?"자료 부족":direction(score))+". 예측 확률이 아닙니다.");
+  number.textContent=score==null?"—":score;
+  label.textContent=horizonText+" 기술적 신호";
+  directionText.textContent=score==null?"자료 부족":direction(score);
+  directionText.className="ring-direction "+(score==null?"neutral":directionClass(score));
+  caption.textContent="추세 · 모멘텀 · 평균회귀 · 규칙 기반 점수 (확률 아님)";
+}
 function refresh(){
   const rows=state.prices;
   if(!rows.length)return;
@@ -188,6 +203,7 @@ function drawHorizonCards(){
     btn.addEventListener("click",()=>{state.horizon=h.n;drawHorizonCards()});panel.appendChild(btn);
   }
   const h=state.horizon,s=scoreAt(i,h);
+  renderCircularScore(s,h);
   const p=$("scoreDetail");
   if(!s){p.textContent="분석에 필요한 정산가가 부족합니다.";return}
   const label=PERIODS.find(x=>x.n===h).label;
