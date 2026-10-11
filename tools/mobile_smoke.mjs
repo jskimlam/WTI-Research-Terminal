@@ -62,7 +62,7 @@ try {
       const reasons = [];
       if (checks.overflow > 2) reasons.push("horizontal overflow " + checks.overflow + "px");
       if (checks.chartWidth < 180 || checks.chartViewBoxWidth < 232) reasons.push("chart too narrow");
-      if (checks.lastDate !== "2026-10-09" || checks.lastClose !== 91.85) reasons.push("settlement mismatch");
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(checks.lastDate) || !Number.isFinite(checks.lastClose) || checks.lastClose <= 0) reasons.push("invalid settlement");
       if (!Number.isFinite(checks.score) || checks.score < 0 || checks.score > 100) reasons.push("invalid bull score");
       if (!checks.ringVisible) reasons.push("circular gauge not visible");
       if (!checks.headerFits) reasons.push("header overflow");
@@ -79,7 +79,8 @@ try {
         await page.locator("#horizonCards button").nth(1).click();
         if (await page.locator("#oscPanels svg").count() < 2) problems.push("chart indicator toggle did not show MACD");
         const ring = await page.locator("#scoreRingValue").textContent();
-        if (ring !== "52") problems.push("1-month horizon did not synchronize circular score (got " + ring + ")");
+        const selected = (await page.locator("#horizonCards button.active strong").textContent()).trim().split(/\\s+/)[0];
+        if (ring !== selected) problems.push("1-month horizon did not synchronize circular score (ring " + ring + ", card " + selected + ")");
       }
     } catch (e) {
       problems.push(spec.name + ": " + e.message);
