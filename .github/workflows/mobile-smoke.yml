@@ -1,0 +1,45 @@
+name: Test Mobile Layouts (Flip / Fold / Galaxy S)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'mobile.css'
+      - 'app.js'
+      - 'tools/mobile_smoke.mjs'
+      - '.github/workflows/mobile-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser testing client
+        run: npm install --no-save --package-lock=false playwright-core@1.55.0
+      - name: Prepare website
+        run: python3 tools/generate_icons.py
+      - name: Start HTTP server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/wti-test-server.log 2>&1 &
+          echo $! > /tmp/wti-server.pid
+          sleep 2
+          curl -fsS http://127.0.0.1:4173/data/wti-settlement.csv | head -n 2
+      - name: Run real Chrome viewport / interaction checks
+        run: node tools/mobile_smoke.mjs
+      - name: Upload viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WTI-Terminal-Mobile-QA
+          path: qa-screenshots/
+          if-no-files-found: ignore
+          retention-days: 7
