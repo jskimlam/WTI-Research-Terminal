@@ -1,0 +1,184 @@
+/* Mobile-first adaptations for Galaxy S / Flip cover and main / Fold 7-8 cover and main.
+   Base visual language remains in styles.css; all rules here are deliberate overrides. */
+html{scroll-padding-top:18px}
+body{overflow-x:clip}
+.site-shell,.panel,.hero,.chart-panel,.insight-panel,.topbar{min-width:0}
+.topbar{padding-inline:max(0px,env(safe-area-inset-left)) max(0px,env(safe-area-inset-right))}
+button,.btn,.control-group button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.control-group button{min-height:37px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #78d8ff;outline-offset:3px}
+.logo strong{overflow-wrap:anywhere}
+.hero-grid,.backtest-metrics,.horizon-grid{min-width:0}
+.headline-price,.hero-metric,.bt-metric{min-width:0;overflow-wrap:anywhere}
+.metric-label{overflow-wrap:anywhere}
+.huge,.hero-metric strong,.bt-metric strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.chart-area svg,.osc-section svg{max-width:100%;touch-action:pan-y}
+.table-scroll{overscroll-behavior-inline:contain}
+dialog{max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}
+#openData,#printBtn{min-height:38px}
+.mobile-tabbar{display:none}
+.install-btn[hidden]{display:none!important}
+.offline-notice{border:1px solid #785f38;background:#302817;color:#f2dfab;padding:10px 16px;margin:12px 0;border-radius:10px;font-size:12px}
+.offline-notice[hidden]{display:none}
+@media(min-width:700px) and (max-width:1180px){
+  /* Fold main 7/8 / unfolded tablet: analysis chart and scoring stay side by side. */
+  .site-shell{padding-inline:clamp(14px,2.2vw,28px)}
+  .grid-main{grid-template-columns:minmax(0,1.5fr) minmax(290px,1fr);gap:12px}
+  .grid-main .insight-panel{display:flex}
+  .grid-main .horizon-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding-inline:12px}
+  .grid-main .score-detail{max-width:none}
+  .grid-main .section-heading{padding:18px 15px 12px}
+  .grid-main .section-heading h2{font-size:18px}
+  .grid-main .section-heading p{font-size:10px}
+  .grid-main .toolbar{padding-inline:12px}
+  .grid-main .chart-area{height:clamp(275px,33vw,350px);margin-inline:4px}
+  .grid-main .chart-footer{padding-inline:14px}
+  .grid-main .restored-ring-panel{margin-inline:12px;padding:10px;grid-template-columns:100px minmax(0,1fr);gap:10px}
+  .grid-main .score-ring{width:100px;height:100px}
+  .grid-main .score-ring::after{inset:10px}
+  .grid-main .score-ring-inner strong{font-size:33px}
+  .grid-main .score-ring-inner span{font-size:8px}
+  .grid-main .ring-direction{font-size:18px}
+  .grid-main .ring-summary p{font-size:10px;margin-block:3px 7px}
+  .grid-main .ring-key{gap:6px;font-size:9px}
+  .grid-main .horizon-card{padding:10px}
+  .grid-main .horizon-card strong{font-size:23px}
+  .grid-main .score-main{padding-top:10px}
+  .grid-main .score-large{font-size:35px;margin:5px 0}
+  .grid-main .score-gauge{margin:7px 0 15px}
+  .grid-main .factor-row{margin:9px 0}
+  .grid-main .score-detail{padding:12px}
+  .grid-main .score-explain{padding:10px;margin-top:12px;font-size:11px}
+  .toolbar .control-group{max-width:100%;flex-wrap:wrap;overflow:visible}
+  .hero-grid{grid-template-columns:1.25fr repeat(3,minmax(0,1fr))}
+}
+@media(max-width:699px){
+  .site-shell{padding-inline:clamp(8px,2.2vw,16px)}
+  .topbar{padding:12px 0;gap:10px}
+  .logo{gap:9px}
+  .logo strong{font-size:clamp(11px,2.75vw,14px);line-height:1.2}
+  .logo>div>span{letter-spacing:.08em!important}
+  .top-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+  .top-actions .btn{padding:8px 10px;font-size:11px;min-height:39px}
+  .top-actions .pill{display:none}
+  .hero{margin:9px 0 12px;padding:clamp(14px,3vw,22px) clamp(12px,3vw,20px) 0}
+  .hero h1{font-size:clamp(21px,5vw,27px)}
+  .hero h1 em{font-size:clamp(13px,3.5vw,17px);display:block;margin:5px 0 0}
+  .hero-top p{font-size:12px;line-height:1.6}
+  .hero-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:15px 0 13px}
+  .hero-metric{padding:10px 8px}
+  .hero-metric strong{font-size:clamp(19px,4.4vw,27px);margin:6px 0 3px}
+  .hero-metric small{font-size:10px;overflow-wrap:anywhere}
+  .hero-metric .metric-label{font-size:9px;line-height:1.4}
+  .headline-price{grid-column:1/-1;padding:13px}
+  .huge{font-size:clamp(36px,9vw,51px)}
+  .hero-delta{font-size:12px}
+  .source-line{display:flex;flex-direction:column;gap:3px;font-size:10px;padding:10px 0}
+  .source-line span{display:block;margin:0}
+  .grid-main{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+  .section-heading{padding:16px 14px 10px}
+  .section-heading h2{font-size:18px}
+  .section-heading p{font-size:11px;line-height:1.5}
+  .toolbar{padding-inline:11px;display:flex;flex-direction:column;align-items:stretch;gap:8px}
+  .toolbar .control-group{width:100%;display:grid;gap:3px;max-width:none;overflow:visible;grid-template-columns:repeat(6,minmax(0,1fr));padding:3px}
+  .toolbar .control-group.studies{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .control-group button{padding:8px 3px;min-height:40px;font-size:clamp(10px,2.65vw,12px);white-space:nowrap}
+  .chart-area{height:clamp(265px,62vw,350px);margin:10px 4px 0}
+  .osc-panels{padding-inline:6px}
+  .chart-footer{padding:12px 13px 16px;font-size:11px}
+  .insight-panel{display:block}
+  .restored-ring-panel{margin:0 12px 13px;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:12px}
+  .score-ring{width:120px;height:120px}
+  .score-ring::after{inset:11px}
+  .score-ring-inner strong{font-size:37px}
+  .ring-direction{font-size:20px}
+  .horizon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-inline:12px;gap:6px}
+  .horizon-card{padding:9px 7px}
+  .horizon-card .label{font-size:11px}
+  .horizon-card strong{font-size:clamp(19px,5vw,27px)}
+  .horizon-card .dir{font-size:10px}
+  .score-detail{padding:12px}
+  .score-main{padding-top:13px}
+  .score-large{font-size:37px}
+  .score-gauge{margin:9px 0 19px}
+  .backtest-metrics{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 12px 14px;gap:8px}
+  .bt-metric{padding:12px 13px}
+  .bt-metric strong{font-size:clamp(23px,6vw,31px)}
+  .handbook-grid{grid-template-columns:1fr;margin:0 12px 16px}
+  .handbook-grid details{padding:14px}
+  .footer{padding-bottom:8px;gap:6px;flex-direction:column}
+  .mobile-tabbar{display:grid;position:fixed;z-index:30;inset:auto 0 0;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;background:#081b2df3;backdrop-filter:blur(15px);border-top:1px solid #42617a;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+  .mobile-tabbar a{display:flex;min-width:0;min-height:40px;gap:6px;align-items:center;justify-content:center;border-radius:9px;color:#b9d2e6;text-decoration:none;font-size:12px;font-weight:700}
+  .mobile-tabbar a:active,.mobile-tabbar a:focus-visible{background:#1e445f;color:#fff}
+  .mobile-tabbar svg{width:17px;height:17px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .table-scroll{padding:0 11px;overflow:visible}
+  .table-scroll table,.table-scroll tbody{display:block;width:100%}
+  .table-scroll thead{display:none}
+  .table-scroll tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:9px;padding:11px;border:1px solid #2b455e;border-radius:11px;background:#0b2136;white-space:normal;gap:8px 10px}
+  .table-scroll td{display:flex;flex-direction:column;gap:3px;min-width:0;white-space:normal;padding:0;border:0;font-size:12px}
+  .table-scroll td:nth-child(1)::before{content:"판정 기준일"}
+  .table-scroll td:nth-child(2)::before{content:"당시 점수"}
+  .table-scroll td:nth-child(3)::before{content:"당시 판정"}
+  .table-scroll td:nth-child(4)::before{content:"검증일"}
+  .table-scroll td:nth-child(5)::before{content:"실제 등락"}
+  .table-scroll td:nth-child(6)::before{content:"결과"}
+  .table-scroll td::before{font-size:10px;color:#93abc0;font-weight:700}
+  .table-scroll tr:hover td{background:transparent}
+  .backtest-panel .section-heading>.control-group{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:13px}
+  .backtest-panel .section-heading>.control-group button{font-size:11px}
+  .table-actions{padding:0 12px 12px}
+  .footnote{margin:12px 12px 18px}
+}
+@media(max-width:420px){
+  .topbar{align-items:center}
+  .topbar .logo{flex:1 1 100%}
+  .top-actions{flex:1 1 100%;justify-content:flex-start}
+  .top-actions .btn{flex:1 1 auto}
+  .hero-metric small{font-size:9px}
+  .horizon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .horizon-card strong{font-size:24px}
+  .chart-area{height:clamp(245px,70vw,290px)}
+  .mobile-tabbar a{font-size:11px}
+}
+@media(max-width:320px){
+  .site-shell{padding-inline:6px}
+  .hero{padding:11px 10px 0}
+  .hero-top p{font-size:10px}
+  .hero h1{font-size:20px}
+  .hero-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .headline-price{grid-column:1/-1}
+  .hero-metric:last-child{grid-column:1/-1}
+  .hero-metric strong{font-size:21px}
+  .toolbar .control-group{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .toolbar .control-group.studies{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .restored-ring-panel{grid-template-columns:96px minmax(0,1fr);gap:7px;padding:10px;margin-inline:8px}
+  .score-ring{width:96px;height:96px}
+  .score-ring::after{inset:9px}
+  .score-ring-inner strong{font-size:30px}
+  .score-ring-inner span{font-size:7px}
+  .ring-direction{font-size:16px}
+  .ring-key{gap:5px;font-size:8px}
+  .ring-summary p{font-size:9px}
+  .chart-area{height:235px}
+  .chart-footer{font-size:10px}
+  .table-actions{gap:8px;flex-wrap:wrap}
+  .mobile-tabbar a{font-size:10px;gap:3px}
+  .mobile-tabbar svg{width:14px}
+}
+@media(orientation:landscape) and (max-height:540px){
+  .hero{padding-top:10px}.hero-grid{padding:8px 0}
+  .chart-area{height:240px}
+  .mobile-tabbar{padding-top:3px;padding-bottom:calc(3px + env(safe-area-inset-bottom))}
+  .mobile-tabbar a{min-height:32px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+@media print{
+  .mobile-tabbar,.install-btn,.offline-notice{display:none!important}
+  body{padding-bottom:0}
+  .grid-main{grid-template-columns:1fr!important}
+  .table-scroll table{display:table}.table-scroll tbody{display:table-row-group}.table-scroll tr{display:table-row;border:0}.table-scroll td{display:table-cell}.table-scroll td::before{display:none}.table-scroll thead{display:table-header-group}
+}
