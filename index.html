@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071628">
+  <meta name="description" content="WTI 선물 종가 기반 기술분석 리서치 터미널. 가격차트, 이동평균선, RSI, MACD, 방향 점수, 비중첩 백테스트.">
+  <title>WTI Research Terminal · Technical Strategy</title>
+  <link rel="stylesheet" href="./styles.css?v=20261011">
+  <script defer src="./app.js?v=20261011"></script>
+</head>
+<body>
+<div class="site-shell">
+  <header class="topbar">
+    <div class="logo"><span class="logo-glyph">W<span class="logo-gold">/</span></span><div><strong>WTI RESEARCH TERMINAL</strong><span>ENERGY · TECHNICAL STRATEGY</span></div></div>
+    <div class="top-actions"><span class="pill"><i class="status-dot"></i> 정산가 데이터 · 수동 업데이트</span><button id="openData" class="btn ghost">데이터 관리</button><button id="printBtn" class="btn primary">인쇄 / PDF</button></div>
+  </header>
+  <section class="hero">
+    <div class="hero-top"><div><span class="eyebrow">NYMEX WTI FRONT-MONTH SETTLEMENT</span><h1>WTI 선물 기술분석 <em>Research Desk</em></h1><p>검증된 일별 정산가를 바탕으로 추세·모멘텀·평균회귀와 과거 방향 적중률을 분석합니다.</p></div><div class="hero-tag">W. ENERGY <span>01 / STRATEGY</span></div></div>
+    <div class="hero-grid">
+      <article class="headline-price"><div class="metric-label">LATEST SETTLEMENT <span id="latestDate">—</span></div><div class="huge" id="latestPrice">—</div><div class="hero-delta" id="latestDelta">데이터 불러오는 중</div><div class="micro">USD / bbl · 연속 근월물, 롤오버 구간 주의</div></article>
+      <article class="hero-metric"><span class="metric-label">20-DAY MOVING AVERAGE</span><strong id="ma20">—</strong><small id="ma20Note">SMA 20</small></article>
+      <article class="hero-metric"><span class="metric-label">RSI / 14</span><strong id="rsiMetric">—</strong><small id="rsiNote">상대강도지수</small></article>
+      <article class="hero-metric"><span class="metric-label">20-SESSION VOLATILITY</span><strong id="volMetric">—</strong><small>일간 수익률 표준편차 × √252 · 연율화</small></article>
+    </div>
+    <div class="source-line"><span id="dataSummary">정산가 불러오는 중…</span><span>실시간 시세 아님 · 마지막 거래일 기준</span></div>
+  </section>
+  <main>
+    <section class="grid-main" id="chartSection">
+      <article class="panel chart-panel">
+        <div class="section-heading"><div><div class="section-number">01 / PRICE & TECHNICAL STUDIES</div><h2>가격과 기술지표</h2><p>결측 거래일 보간 없음 · 차트 지표는 자유롭게 표시 / 해제</p></div><div class="legend-price"><span class="legend-dot"></span> WTI Settlement</div></div>
+        <div class="toolbar">
+          <div class="control-group" id="rangeControls" aria-label="차트 기간"><button data-range="5">1주</button><button data-range="21">1개월</button><button data-range="42">2개월</button><button class="selected" data-range="63">3개월</button><button data-range="126">6개월</button><button data-range="ALL">전체</button></div>
+          <div class="control-group studies" id="studyControls" aria-label="기술지표"><button class="selected" data-study="sma20">SMA 20</button><button data-study="sma50">SMA 50</button><button data-study="ema20">EMA 20</button><button data-study="bb">Bollinger</button><button class="selected" data-study="rsi">RSI 14</button><button data-study="macd">MACD</button></div>
+        </div>
+        <div class="chart-area"><svg id="priceChart" viewBox="0 0 940 360" role="img" aria-label="WTI 정산가 가격 차트"><text x="24" y="45" fill="#9eb4ca">차트 로딩 중…</text></svg><div id="chartTooltip" class="tooltip" hidden></div></div>
+        <div id="oscPanels" class="osc-panels"></div>
+        <div class="chart-footer"><span id="rangeSummary">—</span><span class="chart-note">터치 · 마우스 이동 시 해당 정산가 조회</span></div>
+      </article>
+      <aside class="panel insight-panel">
+        <div class="section-heading compact"><div><div class="section-number">02 / DIRECTIONAL VIEW</div><h2>방향성 판정</h2><p>기술적 우위 점수 · 상승 확률 아님</p></div></div>
+        <div class="horizon-grid" id="horizonCards"></div>
+        <div class="score-detail" id="scoreDetail"><p class="muted">지표 분석 대기 중…</p></div>
+      </aside>
+    </section>
+    <section class="panel backtest-panel" id="backtest">
+      <div class="section-heading"><div><div class="section-number">03 / BACKTEST TRACKBOARD</div><h2>과거 판정은 실제로 맞았을까?</h2><p>각 판정 시점까지만 이용해 점수를 만들고, 이후 종가를 비교합니다. 판정 간격은 검증 기간만큼 띄웁니다.</p></div><div class="control-group" id="btControls"><button class="selected" data-bt="5">1주</button><button data-bt="21">1개월</button><button data-bt="42">2개월</button><button data-bt="63">3개월</button></div></div>
+      <div class="backtest-metrics">
+        <div class="bt-metric"><span>방향 적중률</span><strong id="btAccuracy">—</strong><small id="btAccuracyInfo">—</small></div>
+        <div class="bt-metric"><span>판정 비율</span><strong id="btCoverage">—</strong><small>검증 가능한 표본 중 방향 신호 비율</small></div>
+        <div class="bt-metric"><span>항상 상승 기준</span><strong id="btBaseline">—</strong><small>같은 방향 판정 표본 기준</small></div>
+        <div class="bt-metric"><span>표본 95% 참고구간</span><strong id="btInterval">—</strong><small>Wilson 구간 · 미래 적중 확률 아님</small></div>
+      </div>
+      <div class="table-actions"><strong>최근 판정과 사후 결과</strong><button id="downloadBacktest" class="btn ghost tiny">검증 결과 CSV</button></div>
+      <div class="table-scroll"><table><thead><tr><th>판정 기준일</th><th>당시 점수</th><th>당시 판정</th><th>검증일</th><th>실제 등락</th><th>결과</th></tr></thead><tbody id="backtestRows"><tr><td colspan="6">계산 중…</td></tr></tbody></table></div>
+      <p class="footnote">보합 기준 ±0.5%; 보합 실제 결과는 방향 판정의 적중으로 처리하지 않습니다. 수수료, 롤오버 손익, 슬리피지를 반영하지 않은 회고 방향 검증입니다. 규칙 최적화 및 별도 검증 표본 적용 전 성과는 실거래 예측력의 증거가 아닙니다.</p>
+    </section>
+    <section class="panel handbook-panel">
+      <div class="section-heading"><div><div class="section-number">04 / RESEARCH HANDBOOK</div><h2>점수를 어떻게 해석할까요?</h2><p>가격 위치, 모멘텀, 평균회귀와 백테스트 적중률은 서로 다른 질문에 답합니다.</p></div></div>
+      <div class="handbook-grid">
+        <details open><summary>평균회귀 반등은 무슨 뜻인가요?</summary><p>가격이 최근 평균(SMA20)보다 낮아졌을 때 평균으로 되돌아가려는 성향을 점수화한 것입니다. 평균 아래에 있어도 하락 추세가 길게 이어질 수 있어 상승을 보장하지 않습니다. 추세와 모멘텀을 함께 확인해야 합니다.</p></details>
+        <details><summary>방향 점수는 상승 확률인가요?</summary><p>아닙니다. 0~100의 <b>규칙 기반 종합 신호</b>로 50이 중립입니다. 0~44는 하락 우위, 45~55는 중립, 56~100은 상승 우위입니다. 각 지표의 정규화 값과 사전에 고정한 가중치로 산출하며 확률 보정은 하지 않았습니다.</p></details>
+        <details><summary>백테스트 트랙보드는 무엇인가요?</summary><p>판정 시점까지의 데이터로 신호를 계산한 뒤 5·21·42·63개 정산가 관측치가 지난 후의 실제 가격 방향과 비교합니다. 간격이 겹치지 않도록 표본을 선택하며 중립은 적중률 분모에서 제외합니다. 수익률이나 향후 상승 확률이 아닙니다.</p></details>
+        <details><summary>근월물 롤오버 시 주의할 점은?</summary><p>연속 근월물 정산가는 계약이 교체될 때 월물 간 가격 차이가 수익률·모멘텀에 섞일 수 있습니다. 이 차트는 롤오버 조정이나 백어드저스트를 하지 않은 원자료의 연결입니다. 장기 수익률 또는 거래 시뮬레이션으로 해석하면 안 됩니다.</p></details>
+      </div>
+    </section>
+    <footer class="footer"><span>WTI RESEARCH TERMINAL · GitHub Pages Edition</span><span>단순 교육·리서치용 기술 분석 · 투자 권유 아님 · <a href="https://github.com/jskimlam/WTI-Research-Terminal" target="_blank" rel="noopener">GitHub source ↗</a></span></footer>
+  </main>
+</div>
+<dialog id="dataDialog">
+  <div class="dialog-header"><div><span class="section-number">PRICE DATA MANAGER</span><h2>정산가 데이터 관리</h2></div><button id="closeData" class="btn ghost">닫기 ✕</button></div>
+  <p>CSV 파일을 불러오면 현재 브라우저에서 정산가와 모든 지표를 다시 계산합니다. <b>로컬 불러오기는 GitHub 저장소에 자동 저장되지 않습니다.</b></p>
+  <div class="data-status" id="dataStatus">기본 정산가 불러오는 중…</div>
+  <label class="upload-zone">CSV 파일 선택 <input id="csvFile" type="file" accept=".csv,text/csv"></label>
+  <p class="muted">파일 형식: <code>date,settlement_usd_bbl</code> + <code>2026-10-09,91.85</code>. 날짜별 중복은 마지막 유효 값으로 반영합니다.</p>
+  <div class="dialog-actions"><button class="btn ghost" id="downloadPrices">현재 데이터 CSV</button><button class="btn primary" id="resetPrices">저장소 데이터로 복원</button></div>
+  <p class="footnote">영구 갱신하려면 GitHub 저장소의 <code>data/wti-settlement.csv</code>를 수정하고 커밋하세요. 배포가 갱신되면 사이트에 적용됩니다.</p>
+</dialog>
+</body>
+</html>
