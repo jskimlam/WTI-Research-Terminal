@@ -13,6 +13,17 @@
 - **모바일 최적화:** PC, 갤럭시 S 및 Fold 커버·메인 화면 대응.
 - **정산가 CSV 불러오기/다운로드:** 브라우저에서만 일시 적용. 저장소에 자동으로 커밋되지 않습니다.
 
+## 모바일 UI · PWA · Android APK
+
+- **갤럭시 S/Flip/Fold 커버 화면**: 1열 레이아웃, 반응형 글자/차트, 터치 최적화 버튼, 하단 3탭 이동, 백테스트 카드형 표.
+- **Fold7·8 펼침 화면**: 700~1180 CSS px에서 가격 차트 + BULL SCORE 방향 분석을 2열로 나란히 표시.
+- **PWA**: `manifest.webmanifest`, `sw.js`, `mobile.css` 및 배포 시 자동 생성되는 192/512px 앱 아이콘.
+- **Android APK**: `android/`의 경량 WebView 앱. URL은 기존 GitHub Pages 주소를 그대로 사용해 종가/차트/UI 업데이트 시 APK를 재빌드하지 않아도 최신 웹 앱이 로드됩니다. Android CSV 가져오기·다운로드 지원.
+- **APK 빌드 결과**: [Android APK workflow](https://github.com/jskimlam/WTI-Research-Terminal/actions/workflows/android-apk.yml) → 성공한 실행 선택 → `WTI-Terminal-APK-debug` 아티팩트 다운로드 → 압축 해제 후 APK 설치. CI 디버그 키로 서명된 테스트 APK이며 Play Store 정식 배포용 서명본이 아닙니다. 기기에 설치할 때 알 수 없는 앱 설치 허용이 필요할 수 있습니다.
+- **모바일 자동 검증**: [Mobile viewport QA](https://github.com/jskimlam/WTI-Research-Terminal/actions/workflows/mobile-smoke.yml)는 Flip 커버 280/320, Fold 커버 360/384, Galaxy S 412, Flip 메인 440, Fold 메인 740/840 및 PC 1360 CSS px를 Chrome에서 검증합니다.
+- **오프라인 주의**: 설치 후 캐시된 화면은 보일 수 있으나 **정산가는 실시간이 아니고 오프라인 시 최신값이 아닐 수 있습니다**. 처음 실행에는 네트워크가 필요합니다.
+- **디버그 서명 주의**: GitHub 러너마다 디버그 서명 키가 바뀌므로 새 APK를 기존 APK에 덮어 설치하기 어렵습니다. 정식 업그레이드 배포에는 고정된 사용자 소유 서명 키를 안전하게 설정해야 합니다. 브라우저 앱 데이터는 제거 시 사라질 수 있습니다.
+
 ## 데이터
 
 `data/wti-settlement.csv` · 열: `date,settlement_usd_bbl`
