@@ -133,7 +133,11 @@ function drawChart(){
   if(!data.length)return;
   const count=state.range==="ALL"?data.length:Number(state.range);
   const start=Math.max(0,data.length-count),v=data.slice(start),N=v.length;
-  const W=940,H=360,L=53,R=58,T=14,B=38,iw=W-L-R,ih=H-T-B;
+  // Keep readable text/axes on narrow cover displays instead of shrinking a 940px chart.
+  const W=Math.max(232,Math.round(svg.getBoundingClientRect().width)||940);
+  const mobile=W<700,H=Math.max(224,Math.round($("priceChart").getBoundingClientRect().height)||360);
+  const L=mobile?16:53,R=mobile?54:58,T=14,B=38,iw=W-L-R,ih=H-T-B;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
   const curves=[{name:"settlement",color:COLORS.price,v:v.map(x=>x.close),width:2.9}];
   if(state.studies.has("sma20"))curves.push({color:COLORS.sma20,v:I.ma20.slice(start),width:1.7});
   if(state.studies.has("sma50"))curves.push({color:COLORS.sma50,v:I.ma50.slice(start),width:1.7});
@@ -144,7 +148,7 @@ function drawChart(){
   const x=i=>L+(N===1?0:i/(N-1))*iw,y=num=>T+(yMax-num)/(yMax-yMin)*ih;
   for(const val of ticks(yMin,yMax,5)){const yy=y(val);svg.appendChild(el("line",{x1:L,y1:yy,x2:W-R,y2:yy,stroke:"#244158","stroke-width":"1","stroke-dasharray":"3 5"}));svg.appendChild(el("text",{x:W-R+8,y:yy+4,fill:"#9db4c9","font-size":12},format(val,1)))}
   svg.appendChild(el("text",{x:13,y:18,fill:"#9db4c9","font-size":10},"USD/bbl"));
-  const tickCount=Math.min(5,Math.max(1,N-1));
+  const tickCount=Math.min(W<345?2:W<600?3:5,Math.max(1,N-1));
   for(let j=0;j<=tickCount;j++){const k=Math.round(j/tickCount*(N-1));svg.appendChild(el("text",{x:x(k),y:H-11,fill:"#91a6bc","text-anchor":"middle","font-size":11},v[k].date.slice(5)))}
   curves.forEach(c=>addPath(svg,c.v,x,y,c.color,c.width,c.dash||""));
   const endVal=v[N-1].close,yy=y(endVal);
@@ -169,8 +173,9 @@ function drawChart(){
   drawOscillators(start);
 }
 function oscSvg(series1,series2,opts={}){
-  const W=940,H=108,L=53,R=58,T=18,B=18,iw=W-L-R,ih=H-T-B,N=series1.length;
-  const s=el("svg",{viewBox:"0 0 940 108",role:"img","aria-label":opts.label});
+  const W=Math.max(232,Math.round($("priceChart").getBoundingClientRect().width)||940),H=W<600?96:108;
+  const L=W<700?16:53,R=W<700?54:58,T=18,B=18,iw=W-L-R,ih=H-T-B,N=series1.length;
+  const s=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":opts.label});
   const xs=i=>L+(N===1?0:i/(N-1))*iw;
   const values=[...series1,...(series2||[])].filter(Number.isFinite);
   let min=opts.rsi?0:Math.min(0,...values),max=opts.rsi?100:Math.max(0,...values);
@@ -248,10 +253,16 @@ function drawBacktest(){
   }
 }
 function download(name,content,type="text/csv;charset=utf-8"){
+  // Android WebView cannot download generated blob: URLs through DownloadManager.
+  // Use a narrow native CSV bridge only for this trusted GitHub Pages origin.
+  if(window.WTIAndroid && typeof window.WTIAndroid.saveCsv==="function"){
+    try{window.WTIAndroid.saveCsv(name,content);return}catch(e){console.warn("Native CSV export failed; falling back",e)}
+  }
   const blob=new Blob(["\uFEFF",content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
 }
 function binding(){
+  configureInstallAndConnection();
   $("rangeControls").addEventListener("click",e=>{const btn=e.target.closest("button[data-range]");if(!btn)return;state.range=btn.dataset.range;document.querySelectorAll("#rangeControls button").forEach(x=>x.classList.toggle("selected",x===btn));if(state.ind)drawChart()});
   $("studyControls").addEventListener("click",e=>{const btn=e.target.closest("button[data-study]");if(!btn)return;const id=btn.dataset.study;if(state.studies.has(id))state.studies.delete(id);else state.studies.add(id);btn.classList.toggle("selected",state.studies.has(id));if(state.ind)drawChart()});
   $("btControls").addEventListener("click",e=>{const btn=e.target.closest("button[data-bt]");if(!btn)return;state.backtest=+btn.dataset.bt;document.querySelectorAll("#btControls button").forEach(x=>x.classList.toggle("selected",x===btn));if(state.ind)drawBacktest()});
@@ -290,4 +301,34 @@ async function main(){
     $("dataStatus").textContent=err.message;
   }
 }
+function configureInstallAndConnection(){
+  const install=$("installApp"),notice=$("offlineNotice");
+  function syncOnline(){if(notice)notice.hidden=navigator.onLine}
+  syncOnline();
+  window.addEventListener("online",syncOnline);
+  window.addEventListener("offline",syncOnline);
+  let installPrompt=null;
+  window.addEventListener("beforeinstallprompt",event=>{
+    event.preventDefault();installPrompt=event;if(install)install.hidden=false;
+  });
+  if(install)install.addEventListener("click",async()=>{
+    if(!installPrompt)return;
+    const prompt=installPrompt;installPrompt=null;install.hidden=true;
+    try{await prompt.prompt();await prompt.userChoice}catch(e){console.warn("Install prompt unavailable",e)}
+  });
+  window.addEventListener("appinstalled",()=>{if(install)install.hidden=true});
+  // Recalculate SVG viewBox on Fold cover/main transition and device rotation.
+  let pending=false;
+  const repaint=()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;if(state.ind)drawChart()})};
+  if(typeof ResizeObserver!=="undefined"){
+    new ResizeObserver(repaint).observe($("priceChart").parentElement);
+  }else{
+    window.addEventListener("resize",repaint);
+  }
+}
+window.addEventListener("load",()=>{
+  if("serviceWorker" in navigator && location.protocol==="https:"){
+    navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(e=>console.warn("Offline cache unavailable",e));
+  }
+});
 document.addEventListener("DOMContentLoaded",main);
