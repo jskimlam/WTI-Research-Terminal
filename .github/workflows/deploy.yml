@@ -23,10 +23,20 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Build PWA icons and stage website
+        shell: bash
+        run: |
+          python3 tools/generate_icons.py
+          mkdir -p _site/icons _site/data
+          cp index.html app.js styles.css mobile.css sw.js manifest.webmanifest _site/
+          cp icons/icon.svg icons/icon-192.png icons/icon-512.png _site/icons/
+          cp data/wti-settlement.csv _site/data/
+          test -s _site/icons/icon-192.png && test -s _site/icons/icon-512.png
+          test -s _site/data/wti-settlement.csv
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
