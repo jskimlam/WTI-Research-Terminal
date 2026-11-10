@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "request_id": "2026-11-10-wti-pages-redeploy",
+  "as_of_date": "2026-11-10",
+  "source_file": "data/wti-settlement.csv",
+  "reason": "Republish the validated WTI settlement CSV after GitHub Pages artifact discovery failed in prior workflow attempts. This marker contains metadata only; no historical prices or private data."
+}
